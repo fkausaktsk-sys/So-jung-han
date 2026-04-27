@@ -563,7 +563,20 @@
     <li><a href="#worship">예배</a></li>
     <li><a href="#directions">오시는 길</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="메뉴 열기">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- ── MOBILE DRAWER ── -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <a href="#about"   onclick="closeDrawer()">소개</a>
+  <a href="#sermon"  onclick="closeDrawer()">설교</a>
+  <a href="#praise"  onclick="closeDrawer()">찬양</a>
+  <a href="#worship" onclick="closeDrawer()">예배</a>
+  <a href="#directions" onclick="closeDrawer()">오시는 길</a>
+  <p class="drawer-foot">소중한교회</p>
+</div>
 
 <!-- ── HERO ── -->
 <section id="hero">
@@ -715,20 +728,17 @@
     </p>
 
     <div class="yt-frame r r-d3" id="praiseFrame">
-      <div class="yt-placeholder" id="praisePH">
-        <div class="yt-btn">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
-        <p class="yt-hint">찬양 영상 URL을 입력해 주세요</p>
-      </div>
+      <iframe
+        src="https://www.youtube.com/embed/ix5LVWlP5eE?start=470&rel=0&modestbranding=1"
+        title="야카르 찬양팀"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+      </iframe>
     </div>
 
-    <div class="yt-input-row r r-d4">
-      <input type="text" id="praiseUrl" placeholder="https://youtu.be/..." />
-      <button class="btn-submit" onclick="loadPraise()">불러오기</button>
-    </div>
-
-    <a class="yt-channel-link r r-d5" href="https://www.youtube.com/@sojunghan-church" target="_blank" rel="noopener">
+    <a class="yt-channel-link r r-d4" href="https://www.youtube.com/@sojunghan-church" target="_blank" rel="noopener">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9l5.6 2.8-5.6 2.7z" fill="currentColor"/>
       </svg>
@@ -749,10 +759,6 @@
         <span class="dir-val">경기 성남시 수정구 수정로 328</span>
       </div>
       <div class="dir-row">
-        <span class="dir-label">전화</span>
-        <span class="dir-val">031-000-0000</span>
-      </div>
-      <div class="dir-row">
         <span class="dir-label">이메일</span>
         <span class="dir-val">sojunghan@church.kr</span>
       </div>
@@ -770,6 +776,15 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
     </a>
+
+    <div class="map-embed r r-d3" style="margin-top:16px; border-radius:2px; overflow:hidden; border:1px solid var(--line);">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3170.0!2d127.1380!3d37.4280!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b5b5f93b3f085%3A0x0!2z6rK96riw64+Z64uI64ukIOyVhOyEseyLnCDsl63sp4Dsm5AgMzI4!5e0!3m2!1sko!2skr!4v1"
+        width="100%" height="280" style="border:0; display:block;"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
 
     <div class="transport r r-d4">
       <div class="tr-row">
@@ -792,41 +807,35 @@
 <footer>
   <img class="foot-logo" src="logo.png" alt="소중한교회">
   <div class="foot-rule"></div>
-  <p class="foot-copy">© 2025 소중한교회. All Rights Reserved.<br>대한예수교 장로회 · 담임목사 배영규<br>경기 성남시 수정구 수정로 328 · 031-000-0000</p>
+  <p class="foot-copy">© 2025 소중한교회. All Rights Reserved.<br>대한예수교 장로회 · 담임목사 배영규<br>경기 성남시 수정구 수정로 328</p>
 </footer>
 
 <script>
-  // Nav
+  // Nav scroll
   const nav = document.getElementById('mainNav');
   addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 12));
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('mobileDrawer');
+
+  hamburger.addEventListener('click', () => {
+    const open = drawer.classList.toggle('open');
+    hamburger.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    hamburger.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
   // Reveal
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
   }, { threshold:0.08, rootMargin:'0px 0px -40px 0px' });
   document.querySelectorAll('.r').forEach(el => io.observe(el));
-
-  // YouTube - Sermon (static embed, no loader needed)
-
-  // YouTube - Praise team
-  function loadPraise() {
-    const v = document.getElementById('praiseUrl').value.trim();
-    const frame = document.getElementById('praiseFrame');
-    let id = '';
-    const m = v.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/) ||
-              v.match(/[?&]v=([a-zA-Z0-9_-]{11})/) ||
-              v.match(/embed\/([a-zA-Z0-9_-]{11})/);
-    if (m) id = m[1];
-    if (!id) { alert('올바른 유튜브 URL을 입력해 주세요.'); return; }
-    const ph = document.getElementById('praisePH'); if (ph) ph.remove();
-    const ex = frame.querySelector('iframe'); if (ex) ex.remove();
-    const ifr = document.createElement('iframe');
-    ifr.src = `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
-    ifr.allow = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture';
-    ifr.allowFullscreen = true;
-    frame.appendChild(ifr);
-  }
-  document.getElementById('praiseUrl').addEventListener('keydown', e => { if (e.key==='Enter') loadPraise(); });
 
   // Nav active
   const secs = document.querySelectorAll('section[id]');

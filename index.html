@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소중한교회</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white:   #FFFFFF;
+    --off:     #F9F7F5;
+    --bg2:     #F3F0EC;
+    --line:    #E8E3DC;
+    --gold:    #B89A6A;
+    --gold2:   #D4B98A;
+    --text:    #1A1714;
+    --text2:   #5A5048;
+    --text3:   #9A8E84;
+    --deep:    #0F0D0B;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
+
+  body {
+    font-family:'Noto Sans KR', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    overflow-x:hidden;
+  }
+
+  /* ────────────────────────────
+     NAV
+  ──────────────────────────── */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:200;
+    height:58px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+    background:rgba(255,255,255,0.94);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid transparent;
+    transition:border-color 0.4s, box-shadow 0.4s;
+  }
+  nav.scrolled {
+    border-color: var(--line);
+    box-shadow:0 1px 32px rgba(26,23,20,0.06);
+  }
+  .nav-logo { height:26px; display:block; }
+  .nav-menu {
+    display:flex; gap:28px; list-style:none;
+  }
+  .nav-menu a {
+    font-size:12.5px; font-weight:400; letter-spacing:0.05em;
+    color:var(--text2); text-decoration:none;
+    transition:color 0.2s;
+  }
+  .nav-menu a:hover { color:var(--text); }
+
+  /* ── HAMBURGER ── */
+  .hamburger {
+    display:none;
+    flex-direction:column; justify-content:center; align-items:center;
+    width:36px; height:36px; gap:5px;
+    background:none; border:none; cursor:pointer; padding:4px;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .hamburger span {
+    display:block; width:22px; height:1.5px;
+    background:var(--text);
+    border-radius:2px;
+    transition:transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.25s;
+    transform-origin:center;
+  }
+  .hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+  /* ── MOBILE DRAWER ── */
+  .mobile-drawer {
+    display:none;
+    position:fixed; top:58px; left:0; right:0; bottom:0;
+    z-index:190;
+    background:rgba(255,255,255,0.98);
+    backdrop-filter:blur(20px);
+    flex-direction:column; align-items:center; justify-content:center;
+    gap:0;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.3s ease;
+  }
+  .mobile-drawer.open {
+    opacity:1; pointer-events:all;
+  }
+  .mobile-drawer a {
+    font-family:'Noto Serif KR', serif;
+    font-size:26px; font-weight:300; letter-spacing:0.04em;
+    color:var(--text); text-decoration:none;
+    padding:18px 0; width:100%; text-align:center;
+    border-bottom:1px solid var(--line);
+    transition:color 0.2s, background 0.2s;
+    opacity:0; transform:translateY(12px);
+    transition:opacity 0.3s ease, transform 0.3s ease, color 0.2s;
+  }
+  .mobile-drawer.open a:nth-child(1) { opacity:1; transform:none; transition-delay:0.05s; }
+  .mobile-drawer.open a:nth-child(2) { opacity:1; transform:none; transition-delay:0.10s; }
+  .mobile-drawer.open a:nth-child(3) { opacity:1; transform:none; transition-delay:0.15s; }
+  .mobile-drawer.open a:nth-child(4) { opacity:1; transform:none; transition-delay:0.20s; }
+  .mobile-drawer.open a:nth-child(5) { opacity:1; transform:none; transition-delay:0.25s; }
+  .mobile-drawer a:hover { color:var(--gold); }
+
+  .drawer-foot {
+    margin-top:32px;
+    font-size:11px; font-weight:300; letter-spacing:0.08em;
+    color:var(--text3);
+    opacity:0; transition:opacity 0.3s 0.3s ease;
+  }
+  .mobile-drawer.open .drawer-foot { opacity:1; }
+
+  @media(max-width:600px) {
+    .hamburger { display:flex; }
+    .nav-menu  { display:none; }
+    .mobile-drawer { display:flex; }
+  }
+
+  /* ────────────────────────────
+     HERO
+  ──────────────────────────── */
+  #hero {
+    min-height:100svh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center;
+    padding:100px 32px 72px;
+    background:var(--white);
+    position:relative; overflow:hidden;
+  }
+
+  /* thin horizontal rule lines as background texture */
+  .hero-lines {
+    position:absolute; inset:0; pointer-events:none;
+    background-image: repeating-linear-gradient(
+      180deg,
+      transparent 0px, transparent 47px,
+      rgba(26,23,20,0.035) 47px, rgba(26,23,20,0.035) 48px
+    );
+  }
+
+  /* large ghost serif letter */
+  .hero-ghost {
+    position:absolute;
+    font-family:'Noto Serif KR', serif;
+    font-size:clamp(180px, 50vw, 380px);
+    font-weight:600;
+    color:transparent;
+    -webkit-text-stroke:1px rgba(184,154,106,0.1);
+    letter-spacing:-0.04em;
+    line-height:1;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    white-space:nowrap;
+    user-select:none; pointer-events:none;
+  }
+
+  .hero-inner {
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center; gap:0;
+  }
+
+  .hero-logo-wrap {
+    opacity:0; animation:fadeUp 1s 0.1s forwards;
+    margin-bottom:40px;
+  }
+  .hero-logo { height:68px; max-width:300px; object-fit:contain; }
+
+  .hero-rule {
+    width:1px; height:48px;
+    background:linear-gradient(180deg, transparent 0%, var(--gold) 50%, transparent 100%);
+    margin-bottom:32px;
+    opacity:0; animation:fadeUp 1s 0.35s forwards;
+  }
+
+  .hero-verse {
+    opacity:0; animation:fadeUp 1s 0.5s forwards;
+    max-width:300px;
+  }
+  .hero-verse p {
+    font-family:'Noto Serif KR', serif;
+    font-size:14.5px; font-weight:300; line-height:2;
+    color:var(--text2); letter-spacing:0.02em;
+  }
+  .hero-verse cite {
+    display:block; margin-top:12px;
+    font-size:11px; font-style:normal; font-weight:400;
+    letter-spacing:0.2em; color:var(--gold);
+    text-transform:uppercase;
+  }
+
+  .hero-scroll {
+    position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    opacity:0; animation:fadeUp 0.8s 1.1s forwards;
+  }
+  .hero-scroll span {
+    font-size:9px; letter-spacing:0.3em; color:var(--text3); text-transform:uppercase;
+  }
+  .scroll-line {
+    width:1px; height:32px;
+    background:linear-gradient(180deg, var(--gold) 0%, transparent 100%);
+    animation:scrollPulse 2s infinite;
+  }
+
+  /* ────────────────────────────
+     SHARED SECTION STYLES
+  ──────────────────────────── */
+  .s-wrap { max-width:480px; margin:0 auto; }
+
+  .s-label {
+    font-size:9.5px; font-weight:500; letter-spacing:0.35em;
+    color:var(--gold); text-transform:uppercase;
+    margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s-label::before {
+    content:''; display:block;
+    width:20px; height:1px; background:var(--gold); flex-shrink:0;
+  }
+
+  .s-title {
+    font-family:'Noto Serif KR', serif;
+    font-size:clamp(22px, 5.5vw, 32px);
+    font-weight:400; line-height:1.5;
+    letter-spacing:-0.01em;
+    color:var(--text); margin-bottom:28px;
+  }
+
+  /* ────────────────────────────
+     ABOUT
+  ──────────────────────────── */
+  #about {
+    padding:100px 24px;
+    background:var(--off);
+  }
+
+  .about-body {
+    font-size:14.5px; line-height:2.1;
+    color:var(--text2); font-weight:300;
+    margin-bottom:20px;
+  }
+
+  .about-values {
+    margin-top:48px;
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:1px; background:var(--line);
+    border:1px solid var(--line);
+    border-radius:2px; overflow:hidden;
+  }
+
+  .v-item {
+    background:var(--off);
+    padding:28px 22px;
+    transition:background 0.25s;
+  }
+  .v-item:hover { background:var(--white); }
+
+  .v-num {
+    font-size:11px; font-weight:300; letter-spacing:0.15em;
+    color:var(--gold); margin-bottom:10px;
+  }
+  .v-name {
+    font-family:'Noto Serif KR', serif;
+    font-size:17px; font-weight:400;
+    color:var(--text); margin-bottom:6px;
+  }
+  .v-desc {
+    font-size:12px; font-weight:300;
+    color:var(--text3); line-height:1.7;
+  }
+
+  /* ────────────────────────────
+     SERMON
+  ──────────────────────────── */
+  #sermon {
+    padding:100px 24px;
+    background:var(--white);
+  }
+
+  .yt-frame {
+    position:relative;
+    padding-bottom:56.25%; height:0;
+    background:var(--bg2);
+    border:1px solid var(--line);
+    border-radius:2px; overflow:hidden;
+  }
+
+  .yt-placeholder {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:16px;
+  }
+
+  /* SVG play circle — no emoji */
+  .yt-btn {
+    width:60px; height:60px;
+    border-radius:50%;
+    border:1px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:background 0.2s;
+  }
+  .yt-btn:hover { background:var(--gold); }
+  .yt-btn:hover svg path { fill:var(--white); }
+  .yt-btn svg { width:22px; height:22px; }
+  .yt-btn svg path { fill:var(--gold); transition:fill 0.2s; margin-left:3px; }
+
+  .yt-hint {
+    font-size:12px; font-weight:300; letter-spacing:0.06em;
+    color:var(--text3);
+  }
+  .yt-frame iframe {
+    position:absolute; inset:0; width:100%; height:100%; border:none;
+  }
+
+  .yt-input-row {
+    margin-top:16px; display:flex; gap:8px;
+  }
+  .yt-input-row input {
+    flex:1;
+    border:none; border-bottom:1px solid var(--line);
+    background:transparent;
+    padding:10px 2px;
+    font-size:13px; font-weight:300;
+    font-family:'Noto Sans KR', sans-serif;
+    color:var(--text); outline:none;
+    transition:border-color 0.2s;
+  }
+  .yt-input-row input::placeholder { color:var(--text3); }
+  .yt-input-row input:focus { border-color:var(--gold); }
+
+  .btn-submit {
+    flex-shrink:0;
+    background:none; border:none; border-bottom:1px solid var(--gold);
+    padding:10px 14px;
+    font-size:12px; font-weight:500; letter-spacing:0.08em;
+    color:var(--gold); cursor:pointer;
+    font-family:'Noto Sans KR', sans-serif;
+    transition:background 0.2s, color 0.2s;
+    white-space:nowrap;
+  }
+  .btn-submit:hover { background:var(--gold); color:var(--white); border-color:var(--gold); }
+
+  .yt-note {
+    margin-top:10px; font-size:11px;
+    font-weight:300; color:var(--text3);
+    letter-spacing:0.02em;
+  }
+
+  /* ── PRAISE ── */
+  #praise {
+    padding:100px 24px;
+    background:var(--off);
+  }
+
+  .praise-desc {
+    font-size:14px; font-weight:300; line-height:2;
+    color:var(--text2); margin-bottom:28px;
+  }
+  .praise-desc em {
+    font-style:normal; color:var(--gold); font-weight:400;
+  }
+
+  .yt-channel-link {
+    margin-top:16px;
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12.5px; font-weight:400; letter-spacing:0.04em;
+    color:var(--text2); text-decoration:none;
+    border-bottom:1px solid var(--line);
+    padding-bottom:2px;
+    transition:color 0.2s, border-color 0.2s;
+  }
+  .yt-channel-link:hover { color:var(--gold); border-color:var(--gold); }
+
+  /* ────────────────────────────
+     WORSHIP
+  ──────────────────────────── */
+  #worship {
+    padding:100px 24px;
+    background:var(--off);
+  }
+
+  .worship-list {
+    border-top:1px solid var(--line);
+  }
+
+  .w-row {
+    display:flex; align-items:baseline;
+    gap:20px;
+    padding:22px 0;
+    border-bottom:1px solid var(--line);
+    transition:padding-left 0.25s;
+  }
+  .w-row:hover { padding-left:8px; }
+
+  .w-index {
+    font-size:10px; font-weight:300; letter-spacing:0.15em;
+    color:var(--gold); flex-shrink:0; width:22px;
+  }
+  .w-name {
+    font-family:'Noto Serif KR', serif;
+    font-size:16px; font-weight:400;
+    color:var(--text); flex:1;
+  }
+  .w-time {
+    font-size:15px; font-weight:300;
+    color:var(--text2); letter-spacing:0.02em;
+    text-align:right; flex-shrink:0;
+  }
+  .w-day {
+    font-size:11px; font-weight:300;
+    color:var(--text3); margin-top:3px;
+    letter-spacing:0.04em;
+  }
+
+  /* ────────────────────────────
+     DIRECTIONS
+  ──────────────────────────── */
+  #directions {
+    padding:100px 24px;
+    background:var(--white);
+  }
+
+  .dir-info {
+    margin-bottom:32px;
+    border-top:1px solid var(--line);
+  }
+
+  .dir-row {
+    display:flex; gap:20px;
+    padding:18px 0;
+    border-bottom:1px solid var(--line);
+    align-items:flex-start;
+  }
+
+  .dir-label {
+    font-size:10px; font-weight:500; letter-spacing:0.2em;
+    color:var(--gold); text-transform:uppercase;
+    flex-shrink:0; width:52px; padding-top:2px;
+  }
+  .dir-val {
+    font-size:14px; font-weight:300;
+    color:var(--text2); line-height:1.8;
+  }
+
+  .map-box {
+    border-radius:2px; overflow:hidden;
+    border:1px solid var(--line);
+    position:relative;
+  }
+
+  .map-card {
+    display:block; text-decoration:none;
+    transition:background 0.2s;
+  }
+  .map-card:hover { background:var(--bg2); }
+
+  .map-card-inner {
+    display:flex; align-items:center; gap:16px;
+    padding:22px 20px;
+  }
+  .map-card-text {
+    flex:1; display:flex; flex-direction:column; gap:4px;
+  }
+  .map-card-title {
+    font-size:14.5px; font-weight:400;
+    color:var(--text); letter-spacing:0.02em;
+  }
+  .map-card-sub {
+    font-size:12px; font-weight:300;
+    color:var(--text3); letter-spacing:0.02em;
+  }
+
+  .transport {
+    margin-top:20px;
+    border-top:1px solid var(--line);
+  }
+
+  .tr-row {
+    display:flex; align-items:baseline; gap:16px;
+    padding:16px 0;
+    border-bottom:1px solid var(--line);
+  }
+
+  .tr-type {
+    font-size:10px; font-weight:500; letter-spacing:0.15em;
+    color:var(--gold); text-transform:uppercase;
+    flex-shrink:0; width:38px;
+  }
+  .tr-info {
+    font-size:13.5px; font-weight:300;
+    color:var(--text2); line-height:1.7;
+  }
+
+  /* ────────────────────────────
+     FOOTER
+  ──────────────────────────── */
+  footer {
+    padding:56px 24px 44px;
+    background:var(--deep);
+    text-align:center;
+  }
+  .foot-logo {
+    height:30px; object-fit:contain; margin-bottom:24px;
+    filter:brightness(0) invert(1) opacity(0.7);
+  }
+  .foot-rule {
+    width:32px; height:1px;
+    background:rgba(255,255,255,0.15);
+    margin:0 auto 20px;
+  }
+  .foot-copy {
+    font-size:11.5px; font-weight:300;
+    color:rgba(255,255,255,0.3); line-height:2;
+    letter-spacing:0.04em;
+  }
+
+  /* ────────────────────────────
+     ANIMATIONS & REVEALS
+  ──────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%,100% { opacity:0.4; transform:scaleY(0.8) translateY(0); }
+    50%      { opacity:1;   transform:scaleY(1)   translateY(4px); }
+  }
+
+  .r {
+    opacity:0; transform:translateY(24px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+  .r.on { opacity:1; transform:none; }
+
+  .r-d1 { transition-delay:0.05s; }
+  .r-d2 { transition-delay:0.12s; }
+  .r-d3 { transition-delay:0.19s; }
+  .r-d4 { transition-delay:0.26s; }
+  .r-d5 { transition-delay:0.33s; }
+
+  @media(min-width:600px){
+    .about-values { grid-template-columns:repeat(4,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="mainNav">
+  <a href="#hero"><img class="nav-logo" src="logo.png" alt="소중한교회"></a>
+  <ul class="nav-menu">
+    <li><a href="#about">소개</a></li>
+    <li><a href="#sermon">설교</a></li>
+    <li><a href="#praise">찬양</a></li>
+    <li><a href="#worship">예배</a></li>
+    <li><a href="#directions">오시는 길</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-lines"></div>
+  <div class="hero-ghost">믿음</div>
+
+  <div class="hero-inner">
+    <div class="hero-logo-wrap">
+      <img class="hero-logo" src="logo.png" alt="소중한교회">
+    </div>
+
+    <div class="hero-rule"></div>
+
+    <div class="hero-verse">
+      <p>사랑하는 자여 네 영혼이 잘됨 같이<br>네가 범사에 잘되고 강건하기를 바라노라</p>
+      <cite>요한삼서 1:2</cite>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="s-wrap">
+    <p class="s-label r">Our Church</p>
+    <h2 class="s-title r r-d1">하나님의 사랑으로<br>소중히 세워가는 교회</h2>
+    <p class="about-body r r-d2">
+      소중한교회에 오신 것을 환영합니다.<br>
+      우리 교회는 하나님의 말씀 위에 세워져 모든 성도들이 사랑과 은혜 안에서 함께 성장하는 공동체입니다.
+    </p>
+    <p class="about-body r r-d3">
+      누구나 환영받고, 각자의 소중한 삶이 예수 그리스도 안에서 새롭게 변화되는 은혜를 경험하는 교회가 되기를 소망합니다.
+    </p>
+
+    <div class="about-values r r-d4">
+      <div class="v-item">
+        <p class="v-num">01</p>
+        <p class="v-name">말씀</p>
+        <p class="v-desc">성경 중심의 삶과 신앙</p>
+      </div>
+      <div class="v-item">
+        <p class="v-num">02</p>
+        <p class="v-name">기도</p>
+        <p class="v-desc">기도로 세워가는 교회</p>
+      </div>
+      <div class="v-item">
+        <p class="v-num">03</p>
+        <p class="v-name">사랑</p>
+        <p class="v-desc">서로 사랑하는 공동체</p>
+      </div>
+      <div class="v-item">
+        <p class="v-num">04</p>
+        <p class="v-name">성장</p>
+        <p class="v-desc">함께 자라가는 믿음</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERMON ── -->
+<section id="sermon">
+  <div class="s-wrap">
+    <p class="s-label r">This Week's Message</p>
+    <h2 class="s-title r r-d1">이번주 설교 말씀</h2>
+
+    <div class="yt-frame r r-d2" id="ytFrame">
+      <iframe
+        src="https://www.youtube.com/embed/lubTlrAAFz4?si=lAyy5AEh4nk6gDu-"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <a class="yt-channel-link r r-d3" href="https://www.youtube.com/@sojunghan-church" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9l5.6 2.8-5.6 2.7z" fill="currentColor"/>
+      </svg>
+      소중한교회 유튜브 채널 바로가기
+    </a>
+  </div>
+</section>
+
+<!-- ── WORSHIP ── -->
+<section id="worship">
+  <div class="s-wrap">
+    <p class="s-label r">Worship Services</p>
+    <h2 class="s-title r r-d1">예배 안내</h2>
+
+    <div class="worship-list">
+      <div class="w-row r r-d1">
+        <span class="w-index">01</span>
+        <div style="flex:1">
+          <div class="w-name">주일 1부 예배</div>
+          <div class="w-day">주일 오전 · 본당</div>
+        </div>
+        <div class="w-time">9:00 AM</div>
+      </div>
+      <div class="w-row r r-d2">
+        <span class="w-index">02</span>
+        <div style="flex:1">
+          <div class="w-name">주일 2부 예배</div>
+          <div class="w-day">주일 오전 · 본당</div>
+        </div>
+        <div class="w-time">11:00 AM</div>
+      </div>
+      <div class="w-row r r-d3">
+        <span class="w-index">03</span>
+        <div style="flex:1">
+          <div class="w-name">주일 저녁 예배</div>
+          <div class="w-day">주일 저녁 · 본당</div>
+        </div>
+        <div class="w-time">6:00 PM</div>
+      </div>
+      <div class="w-row r r-d4">
+        <span class="w-index">04</span>
+        <div style="flex:1">
+          <div class="w-name">수요 예배</div>
+          <div class="w-day">매주 수요일 · 본당</div>
+        </div>
+        <div class="w-time">7:30 PM</div>
+      </div>
+      <div class="w-row r r-d5">
+        <span class="w-index">05</span>
+        <div style="flex:1">
+          <div class="w-name">새벽 기도회</div>
+          <div class="w-day">월 – 토 · 기도실</div>
+        </div>
+        <div class="w-time">6:00 AM</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRAISE ── -->
+<section id="praise">
+  <div class="s-wrap">
+    <p class="s-label r">Worship & Praise</p>
+    <h2 class="s-title r r-d1">야카르 찬양팀</h2>
+    <p class="praise-desc r r-d2">
+      '야카르(יָקָר)'는 히브리어로 <em>소중하다</em>는 뜻입니다.<br>
+      하나님께 드리는 소중한 찬양으로 예배를 섬기는 팀입니다.
+    </p>
+
+    <div class="yt-frame r r-d3" id="praiseFrame">
+      <div class="yt-placeholder" id="praisePH">
+        <div class="yt-btn">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <p class="yt-hint">찬양 영상 URL을 입력해 주세요</p>
+      </div>
+    </div>
+
+    <div class="yt-input-row r r-d4">
+      <input type="text" id="praiseUrl" placeholder="https://youtu.be/..." />
+      <button class="btn-submit" onclick="loadPraise()">불러오기</button>
+    </div>
+
+    <a class="yt-channel-link r r-d5" href="https://www.youtube.com/@sojunghan-church" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9l5.6 2.8-5.6 2.7z" fill="currentColor"/>
+      </svg>
+      야카르 찬양팀 영상 더 보기
+    </a>
+  </div>
+</section>
+
+<!-- ── DIRECTIONS ── -->
+<section id="directions">
+  <div class="s-wrap">
+    <p class="s-label r">Location</p>
+    <h2 class="s-title r r-d1">오시는 길</h2>
+
+    <div class="dir-info r r-d2">
+      <div class="dir-row">
+        <span class="dir-label">주소</span>
+        <span class="dir-val">경기 성남시 수정구 수정로 328</span>
+      </div>
+      <div class="dir-row">
+        <span class="dir-label">전화</span>
+        <span class="dir-val">031-000-0000</span>
+      </div>
+      <div class="dir-row">
+        <span class="dir-label">이메일</span>
+        <span class="dir-val">sojunghan@church.kr</span>
+      </div>
+    </div>
+
+    <a class="map-box map-card r r-d3" href="https://naver.me/5LQAwVK6" target="_blank" rel="noopener">
+      <div class="map-card-inner">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" fill="var(--gold)"/>
+        </svg>
+        <div class="map-card-text">
+          <span class="map-card-title">네이버 지도에서 보기</span>
+          <span class="map-card-sub">탭하여 길찾기 및 위치 확인</span>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+
+    <div class="transport r r-d4">
+      <div class="tr-row">
+        <span class="tr-type">지하철</span>
+        <span class="tr-info">○○역 ○번 출구에서 도보 5분</span>
+      </div>
+      <div class="tr-row">
+        <span class="tr-type">버스</span>
+        <span class="tr-info">○○○번 버스 소중한교회 정류장 하차</span>
+      </div>
+      <div class="tr-row">
+        <span class="tr-type">주차</span>
+        <span class="tr-info">교회 주차장 이용 가능 (○○대)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <img class="foot-logo" src="logo.png" alt="소중한교회">
+  <div class="foot-rule"></div>
+  <p class="foot-copy">© 2025 소중한교회. All Rights Reserved.<br>대한예수교 장로회 · 담임목사 배영규<br>경기 성남시 수정구 수정로 328 · 031-000-0000</p>
+</footer>
+
+<script>
+  // Nav
+  const nav = document.getElementById('mainNav');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 12));
+
+  // Reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold:0.08, rootMargin:'0px 0px -40px 0px' });
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+  // YouTube - Sermon (static embed, no loader needed)
+
+  // YouTube - Praise team
+  function loadPraise() {
+    const v = document.getElementById('praiseUrl').value.trim();
+    const frame = document.getElementById('praiseFrame');
+    let id = '';
+    const m = v.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/) ||
+              v.match(/[?&]v=([a-zA-Z0-9_-]{11})/) ||
+              v.match(/embed\/([a-zA-Z0-9_-]{11})/);
+    if (m) id = m[1];
+    if (!id) { alert('올바른 유튜브 URL을 입력해 주세요.'); return; }
+    const ph = document.getElementById('praisePH'); if (ph) ph.remove();
+    const ex = frame.querySelector('iframe'); if (ex) ex.remove();
+    const ifr = document.createElement('iframe');
+    ifr.src = `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
+    ifr.allow = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture';
+    ifr.allowFullscreen = true;
+    frame.appendChild(ifr);
+  }
+  document.getElementById('praiseUrl').addEventListener('keydown', e => { if (e.key==='Enter') loadPraise(); });
+
+  // Nav active
+  const secs = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav-menu a');
+  addEventListener('scroll', () => {
+    let cur = '';
+    secs.forEach(s => { if (scrollY >= s.offsetTop - 80) cur = s.id; });
+    links.forEach(a => a.style.color = a.getAttribute('href') === '#'+cur ? 'var(--text)' : '');
+  });
+</script>
+</body>
+</html>
